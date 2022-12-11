@@ -7,5 +7,19 @@ export default {
       method : 'post',
       data : searchObj
     })
+  },
+  deleteHospSetById(id) {
+    return request({
+      url : `/admin/hosp/hospitalSet/${id}`,
+      method : "delete"
+    })
+  },
+  // 批量删除
+  deleteBatchByIds(idList) {
+    return request({
+      url : "/admin/hosp/hospitalSet/batchDelete",
+      method : "delete",
+      data : idList
+    })
   }
 }
