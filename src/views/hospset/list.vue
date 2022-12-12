@@ -27,12 +27,12 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column type="index" width="50" label="序号" />
-      <el-table-column prop="hosname" label="医院名称" />
+      <el-table-column type="index" width="70" label="序号" />
+      <el-table-column prop="hosname" label="医院名称"  />
       <el-table-column prop="hoscode" label="医院编号" />
-      <el-table-column prop="apiUrl" label="api基础路径" width="200" />
-      <el-table-column prop="contactsName" label="联系人姓名" />
-      <el-table-column prop="contactsPhone" label="联系人手机" />
+      <el-table-column prop="apiUrl" label="api基础路径" width="250" />
+      <el-table-column prop="contactsName" label="联系人姓名"   />
+      <el-table-column prop="contactsPhone" label="联系人手机"  width="150" />
       <el-table-column label="状态" width="80">
         <template slot-scope="scope">
           {{ scope.row.status === 1 ? "可用" : "不可用" }}
@@ -40,7 +40,17 @@
       </el-table-column>
       <el-table-column label="锁定/解锁" width="80">
         <template slot-scope="scope">
-            <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-tooltip :content="'Switch value: ' + value" placement="top">
+            <el-switch
+              v-model="scope.row.status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              :active-value="1"
+              :inactive-value="0"
+              @change="switchChange($event, scope.row.id, scope.row.status)"
+            >
+            </el-switch>
+          </el-tooltip>
         </template>
       </el-table-column>
       <!-- 删除按钮 -->
@@ -53,6 +63,13 @@
             @click="removeDataById(scope.row.id)"
           >
           </el-button>
+          <router-link :to="'/hospSet/edit/' + scope.row.id">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+            ></el-button>
+          </router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -64,7 +81,7 @@
       :total="total"
       style="padding: 30px 0; text-align: center"
       layout="total, prev, pager, next, jumper"
-      @current-change="fetchData"
+      @current-change="getList"
     />
   </div>
 </template>
@@ -79,12 +96,12 @@ export default {
     return {
       // 定义初始值
       current: 1,
-      limit: 3,
+      limit: 5,
       total: 0,
       searchObj: {}, // 条件封装对象
       list: [], // 每页数据的集合 用于接收后端传来的值
       multipleSelection: [], // 数组 用来接收批量删除的id
-      value : true
+      value: "0",
     };
   },
   created() {
@@ -149,6 +166,15 @@ export default {
     // 每次点击任意复选框触发该事件
     handleSelectionChange(selection) {
       this.multipleSelection = selection;
+    },
+
+    // 修改状态事件代码
+    switchChange($event, id, status) {
+      alert(id);
+      alert(status);
+      hospset.lockHospSet(id, status).then((response) => {
+        this.getList();
+      });
     },
   },
 };
