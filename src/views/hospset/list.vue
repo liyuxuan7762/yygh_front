@@ -173,7 +173,7 @@ export default {
       alert(id);
       alert(status);
       hospset.lockHospSet(id, status).then((response) => {
-        this.getList();
+        this.getList(this.current);
       });
     },
   },
